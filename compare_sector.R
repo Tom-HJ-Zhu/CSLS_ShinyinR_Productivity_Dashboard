@@ -2,7 +2,6 @@ path = "C:/Users/HJTom/Desktop/CSLS/shiny_project/3610048001.csv"
 path2 <- file.path("data", "3610048001.csv")
 df <- read.csv(path2)
 
-
 # Say if we want to add territories into this list, 
 # we will also need to change User Interface.
 provinces <- c("Canada",
@@ -524,7 +523,7 @@ server <- function(input, output) {
   # display the tree
   output$tree <- tree
   
-  # new code
+  # Set a limit of maximum sectors could be selected
   MAX_SECTORS <- 10
   sector_limit_ok <- reactive({
     n <- length(sectors())
@@ -538,8 +537,6 @@ server <- function(input, output) {
     }
     TRUE
   })
-  #___________________________________
-  
   
   #determine the location of the sector selected in the csv file
   sectors <-reactive({
@@ -703,6 +700,7 @@ shinyApp(ui, server)
 #                          +                           secret='<SECRET>')
 # upload 
 #  rsconnect::deployApp(appDir = "C:/Users/HJTom/Desktop/CSLS/shiny_project/app",appMode = "shiny",appName = "csls-sector-dashboard",   appPrimaryDoc="compare_sector.R")
+
 
 
 
