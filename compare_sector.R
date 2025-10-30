@@ -1,6 +1,6 @@
 path = "C:/Users/HJTom/Desktop/CSLS/shiny_project/3610048001.csv"
 path2 <- file.path("data", "3610048001.csv")
-df <- read.csv(path)
+df <- read.csv(path2)
 
 
 # Say if we want to add territories into this list, 
@@ -86,6 +86,7 @@ ui <- page_sidebar(
   
 
   plotlyOutput("line"),
+  
   conditionalPanel(
     condition = "input.extra == true",
     card(
@@ -523,10 +524,26 @@ server <- function(input, output) {
   # display the tree
   output$tree <- tree
   
+  # new code
+  MAX_SECTORS <- 10
+  sector_limit_ok <- reactive({
+    n <- length(sectors())
+    if (n > MAX_SECTORS) {
+      showNotification(
+        paste0("You have selected ", n, " sectors. To protect our server, you may only select no more than ", MAX_SECTORS, " sectors at a time.
+               Sorry for this inconvenience! We appreciate your ongoing support for CSLS and a better True North."),
+        type = "error", duration = 15
+      )
+      return(FALSE)
+    }
+    TRUE
+  })
+  #___________________________________
   
   
   #determine the location of the sector selected in the csv file
   sectors <-reactive({
+    
     req(input$tree)
     sel <- get_selected(input$tree, format = "names")
     if (is.null(sel) || length(sel) == 0){
@@ -546,6 +563,8 @@ server <- function(input, output) {
   
   ## to plot the chart requested by user
   df_2plot <- reactive({
+    
+    req(sector_limit_ok())
     
     #call in inputs
     req(input$year, input$radio)
@@ -683,7 +702,9 @@ shinyApp(ui, server)
 #                          +                           token='3A10C1ED9ABB83E4B63C1776EE6105CE',
 #                          +                           secret='<SECRET>')
 # upload 
-#  rsconnect::deployApp(appDir = "C:/Users/HJTom/Desktop/CSLS/shiny_project/app",appMode = "shiny",appName = "csls-provincial-dashboard",   appPrimaryDoc="CompareProvinces.R")
+#  rsconnect::deployApp(appDir = "C:/Users/HJTom/Desktop/CSLS/shiny_project/app",appMode = "shiny",appName = "csls-sector-dashboard",   appPrimaryDoc="compare_sector.R")
+
+
 
 
 
