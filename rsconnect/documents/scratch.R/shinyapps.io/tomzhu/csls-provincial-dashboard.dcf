@@ -1,0 +1,10 @@
+name: csls-provincial-dashboard
+title:
+username: tomzhu
+account: tomzhu
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15699712
+bundleId: 11061960
+url: https://tomzhu.shinyapps.io/csls-provincial-dashboard/
+version: 1
