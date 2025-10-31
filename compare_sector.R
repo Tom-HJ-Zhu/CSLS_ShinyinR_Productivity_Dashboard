@@ -36,12 +36,10 @@ ui <- page_sidebar(
   sidebar = sidebar(
     
     # this is the drop down menu
-    # everything we need to do now is to bring it up to the UI.
-    # its logic will be coded in the server downside
-    # UI
+    # let's bring it up to the UI first
+    # later its logic will be coded in the server downside
     shinyTree("tree",checkbox = TRUE ),
-    
-    
+  
    radioButtons("radio", "Select one province:", choices = list("Canada" = 1, 
                                                                 "Newfoundland and Labrador" = 2, 
                                                                 "Prince Edward Island" = 3,
@@ -98,7 +96,7 @@ ui <- page_sidebar(
   )
   ),
   
-  
+  #html things
   tags$style(HTML("
   .cagr-table table {
     font-size: 12px;      
@@ -519,8 +517,6 @@ server <- function(input, output) {
       
     )
   })
-  
-  # display the tree
   output$tree <- tree
   
   # Set a limit of maximum sectors could be selected
@@ -540,7 +536,6 @@ server <- function(input, output) {
   
   #determine the location of the sector selected in the csv file
   sectors <-reactive({
-    
     req(input$tree)
     sel <- get_selected(input$tree, format = "names")
     if (is.null(sel) || length(sel) == 0){
@@ -560,14 +555,14 @@ server <- function(input, output) {
   
   ## to plot the chart requested by user
   df_2plot <- reactive({
-    
+    #check the number of sectors selected
     req(sector_limit_ok())
     
     #call in inputs
     req(input$year, input$radio)
     
     #search for the the sector selected
-    #determine where is this sector in the csv file
+    #determine its location in the csv file
     search_for <- sectors()
     sectors_num <- list()
     for (i in search_for) {
@@ -578,13 +573,14 @@ server <- function(input, output) {
         }
     }
     
-    #determine where the data is for selected provinces 
+    #determine the location for selected provinces in the csv
     horizon <- input$year[1]:input$year[2]
     num_obs <- length(horizon)
     checks <- as.numeric(input$radio)
     loc <- (checks-1)*tot_obs
     
-    #determine where the data is for selected years
+    #determine the location for selected years in the csv 
+    #(yes, it has been very clumsy because we are reading a csv file in R. If there is another way to read this file, the whole thing would be a lot easier)
     start <- input$year[1]-Years[1]
     shift <- loc + start
     
@@ -631,7 +627,7 @@ server <- function(input, output) {
     ggplotly(p)
   })
   
-  ## to plot the chart requested by user
+  ## to plot the table requested by user
   df_2table <- reactive({
     
     #call in inputs
@@ -700,6 +696,7 @@ shinyApp(ui, server)
 #                          +                           secret='<SECRET>')
 # upload 
 #  rsconnect::deployApp(appDir = "C:/Users/HJTom/Desktop/CSLS/shiny_project/app",appMode = "shiny",appName = "csls-sector-dashboard",   appPrimaryDoc="compare_sector.R")
+
 
 
 
